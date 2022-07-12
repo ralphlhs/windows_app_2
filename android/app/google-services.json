@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1008550570183",
+    "project_id": "pic-share-app-by-riverti",
+    "storage_bucket": "pic-share-app-by-riverti.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1008550570183:android:5888d1be6120fbee9036e2",
+        "android_client_info": {
+          "package_name": "com.example.windows_app_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1008550570183-s740rmigpmiad19ojq5lc9gjr8sm3gl5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPQFzoa2_jBn_jhSbsI48hmc3BFzWcIJM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1008550570183-s740rmigpmiad19ojq5lc9gjr8sm3gl5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
