@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:windows_app_2/create_page.dart';
+import 'package:windows_app_2/pic_view.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key, required this.title}) : super(key: key);
@@ -21,27 +23,102 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title, style: const TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
+      body: _buildBody(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          Navigator.push( context,
+          MaterialPageRoute(builder: (context) => const CreatePage()),
+          );
+        },
+        // _incrementCounter,
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        backgroundColor: Colors.amber,
+        child: const Icon(Icons.account_box_outlined),
+      ),
     );
+  }
+
+  Widget _buildBody() {
+    return GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisSpacing: 5,
+            mainAxisSpacing: 5,
+            crossAxisCount: 3,
+            childAspectRatio: 1.0),
+        primary: false,
+        padding: const EdgeInsets.all(8),
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Picview(
+                        height: "e.height",
+                        imageurl:
+                            "https://64.media.tumblr.com/88b38f715767d34d7a9d33ca93182e80/tumblr_of3e2uI1471vitnh0o4_400.jpg")),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              color: Colors.teal[100],
+              child: Image.network(
+                  "https://techbigs.com/uploads/2020/02/adorable-home-5717.jpg",
+                  fit: BoxFit.cover),
+            ),
+          );
+        }
+
+        // children: <Widget>[
+        //   InkWell(
+        //     onTap: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //             builder: (context) => Picview(
+        //                 height: "e.height",
+        //                 imageurl:
+        //                     "https://techbigs.com/uploads/2020/02/adorable-home-5717.jpg")),
+        //       );
+        //     },
+        //     child: Container(
+        //       padding: const EdgeInsets.all(8),
+        //       color: Colors.teal[100],
+        //       child: Image.network(
+        //           "https://techbigs.com/uploads/2020/02/adorable-home-5717.jpg"),
+        //     ),
+        //   ),
+        //   Container(
+        //     padding: const EdgeInsets.all(8),
+        //     color: Colors.teal[200],
+        //     child: Image.network(
+        //         "https://dbdzm869oupei.cloudfront.net/img/sticker/preview/29027.png"),
+        //   ),
+        //   Container(
+        //     padding: const EdgeInsets.all(8),
+        //     color: Colors.teal[300],
+        //     child: const Text('Sound of screams but the'),
+        //   ),
+        //   Container(
+        //     padding: const EdgeInsets.all(8),
+        //     color: Colors.teal[400],
+        //     child: const Text('Who scream'),
+        //   ),
+        //   Container(
+        //     padding: const EdgeInsets.all(8),
+        //     color: Colors.teal[500],
+        //     child: const Text('Revolution is coming...'),
+        //   ),
+        //   Container(
+        //     padding: const EdgeInsets.all(8),
+        //     color: Colors.teal[600],
+        //     child: const Text('Revolution, they...'),
+        //   ),
+        // ],
+        );
   }
 }

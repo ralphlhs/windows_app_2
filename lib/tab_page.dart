@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:windows_app_2/search_page.dart';
-
 import 'account_page.dart';
 import 'home_page.dart';
 
 class TabPage extends StatefulWidget {
-  const TabPage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const TabPage({Key? key, required this.titlee}) : super(key: key);
+  final String titlee;
 
   @override
   State<TabPage> createState() => _TabPageState();
@@ -18,17 +17,9 @@ class _TabPageState extends State<TabPage> {
 
   final _pages = [
     HomePage(),
-    SearchPage(title: "하이 하이"),
+    SearchPage(title: "히요~"),
     AccountPage(),
   ];
-
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
