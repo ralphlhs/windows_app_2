@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:windows_app_2/tab_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'loading_page.dart';
 import 'loginPage.dart';
 
 class RootPage extends StatelessWidget {
@@ -8,17 +9,16 @@ class RootPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: StreamBuilder(
+    return StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData == null) {
-              return const LogInIn();
+          builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const LoadingPage();
             } else {
-              return
-              //
-              const TabPage(titlee: "{snapshot!.data.displayName}님 반갑습니다.");
+              if (snapshot.hasData) {
+                return TabPage(user: snapshot.data!);
+              }
+              return const LoginPage();
 
 
 
@@ -42,8 +42,7 @@ class RootPage extends StatelessWidget {
 
             }
           },
-        ),
-      ),
+
     );
   }
 }

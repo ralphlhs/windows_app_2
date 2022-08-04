@@ -1,25 +1,30 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:windows_app_2/search_page.dart';
 import 'account_page.dart';
 import 'home_page.dart';
 
 class TabPage extends StatefulWidget {
-  const TabPage({Key? key, required this.titlee}) : super(key: key);
-  final String titlee;
+  const TabPage({Key? key, required this.user}) : super(key: key);
+  final User user;
 
   @override
   State<TabPage> createState() => _TabPageState();
 }
 
 class _TabPageState extends State<TabPage> {
-
   int _selectedIndex = 0;
+  late List _pages;
 
-  final _pages = [
-    HomePage(),
-    SearchPage(title: "히요~"),
-    AccountPage(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      HomePage(user: widget.user),
+      SearchPage(user: widget.user),
+      AccountPage(user: widget.user),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +42,7 @@ class _TabPageState extends State<TabPage> {
             _selectedIndex = index;
           });
         },
-      ),// This trailing comma makes auto-formatting nicer for build methods.
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

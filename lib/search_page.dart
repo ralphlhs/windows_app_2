@@ -1,10 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:windows_app_2/create_page.dart';
 import 'package:windows_app_2/pic_view.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const SearchPage({Key? key, required this.user}) : super(key: key);
+  final User user;
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -23,7 +24,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title, style: const TextStyle(color: Colors.black)),
+        title: Text(widget.user.displayName!, style: const TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
       ),
       body: _buildBody(),
