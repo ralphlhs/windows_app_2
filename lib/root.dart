@@ -12,13 +12,13 @@ class RootPage extends StatelessWidget {
     return StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const LoadingPage();
-            } else {
+            // if (snapshot.connectionState == ConnectionState.waiting) {
+            //   return const LoadingPage();
+            // } else {
               if (snapshot.hasData) {
                 return TabPage(user: snapshot.data!);
-              }
-              return const LoginPage();
+              } else {
+              return const LogInIn();
 
 
 
@@ -46,3 +46,15 @@ class RootPage extends StatelessWidget {
     );
   }
 }
+
+class Merong extends StatelessWidget {
+  const Merong({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("메롱 약오르지", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold))),
+
+    );
+  }
+}
+

@@ -67,7 +67,7 @@ class AccountPage extends StatelessWidget {
               ),
             ]),
             const Padding(padding: EdgeInsets.all(8.0)),
-            const Text("name"),
+            Text(user.displayName!),
           ]),
           const SizedBox(
             height: 30,

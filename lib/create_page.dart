@@ -1,3 +1,5 @@
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -56,7 +58,18 @@ class _CreatePageState extends State<CreatePage> {
       title: const Text("새 게시물", textAlign: TextAlign.center),
       actions: [
         IconButton(
-            onPressed: () {}, icon: const Icon(Icons.send))
+            onPressed: () {
+              final firebaseStorageRef = FirebaseStorage.instance
+                  .ref()
+                  .child('post')
+                  .child('${DateTime.now().microsecondsSinceEpoch}.png');
+              final task = firebaseStorageRef.putFile(
+                  _image!, SettableMetadata(contentType: 'image/png'));
+              task.then((value) {
+                var downloadUrl = value.ref.getDownloadURL();
+              });
+            },
+            icon: const Icon(Icons.send))
       ],
     );
   }
@@ -64,8 +77,7 @@ class _CreatePageState extends State<CreatePage> {
   _buildBody() {
     return Column(
       children: [
-         _image == null? const Text("No Image") : Image.file(_image!),
-
+        _image == null ? const Text("No Image") : Image.file(_image!),
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: TextField(

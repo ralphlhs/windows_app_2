@@ -3,11 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:windows_app_2/root.dart';
 import 'firebase_options.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
 }
@@ -28,4 +27,23 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: Firebase.initializeApp(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text("Firebase load fail"),
+            );
+          }
+          if(snapshot.connectionState == ConnectionState.done){
+            return const RootPage();
+          }
+          return const CircularProgressIndicator();
+        });
+  }
+}

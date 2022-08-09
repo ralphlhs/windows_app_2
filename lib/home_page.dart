@@ -25,17 +25,17 @@ class HomePage extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(50.0),
                   child: Column(children: <Widget>[
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 60.0,
                       backgroundImage: NetworkImage(
-                          "https://cf.bstatic.com/xdata/images/hotel/max1024x768/183655908.jpg?k=9ef9b22c28d993f3efd23a27e2c8aa2f43e3da805d0383bd769b166f0b537c20&o=&hp=1"),
+                          user.photoURL!),
                     ),
                     const SizedBox(
                       width: 100.0,
                       height: 30.0,
                     ),
-                    const Text("e-mail"),
-                    const Text("{widget.snapshot.data.displayName}"),
+                    Text(user.displayName!),
+                    Text(user.email!),
                     const SizedBox(
                       width: 100.0,
                       height: 70.0,
