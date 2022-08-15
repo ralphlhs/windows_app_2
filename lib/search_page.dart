@@ -5,7 +5,7 @@ import 'package:windows_app_2/pic_view.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key, required this.user}) : super(key: key);
-  final User user;
+  final User? user;
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -24,14 +24,14 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.user.displayName!, style: const TextStyle(color: Colors.black)),
+        title: Text(widget.user!.displayName!, style: const TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
       ),
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push( context,
-          MaterialPageRoute(builder: (context) => const CreatePage()),
+          MaterialPageRoute(builder: (context) => CreatePage(user: widget.user!)),
           );
         },
         // _incrementCounter,
