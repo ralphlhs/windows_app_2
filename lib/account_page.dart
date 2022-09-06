@@ -1,27 +1,38 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AccountPage extends StatelessWidget {
-  const AccountPage({Key? key, required this.user}) : super(key: key);
+  AccountPage({Key? key, required this.user}) : super(key: key);
   final User user;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  Future<void> _handleSignOut() => _googleSignIn.disconnect();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppbar(),
+      appBar: AppBar(
+        foregroundColor: Colors.black45,
+        backgroundColor: Colors.white,
+        title: Text(
+          'Instagram Clone',
+          style: GoogleFonts.pacifico(fontSize: 20.0, color: Colors.black),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              _handleSignOut();
+              // FirebaseAuth.instance.signOut();
+              // _googleSignIn.signOut();
+            },
+            icon: const Icon(Icons.exit_to_app),
+          )
+        ],
+      ),
       body: _buildBody(),
-    );
-  }
-
-  _buildAppbar() {
-    AppBar(
-      title: const Text("Instagram Clon", textAlign: TextAlign.center),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.exit_to_app),
-        )
-      ],
     );
   }
 

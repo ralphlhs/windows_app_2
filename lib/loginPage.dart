@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
 import 'dart:convert' show json;
@@ -160,9 +161,9 @@ class LoginPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
+            Text(
               'Instagram Clone',
-              style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold),
+              style: GoogleFonts.pacifico(fontSize: 40.0, fontWeight: FontWeight.bold),
             ),
             Container(
               margin: const EdgeInsets.all(50.0),

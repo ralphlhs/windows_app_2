@@ -58,7 +58,7 @@ class _CreatePageState extends State<CreatePage> {
 
   _buildAppbar() {
     return AppBar(
-      title: const Text("새 게시물", textAlign: TextAlign.center),
+      title: const Text("새 게시물", textAlign: TextAlign.center,),
       actions: [
         IconButton(onPressed: () {
           // uploadToFirebase;
