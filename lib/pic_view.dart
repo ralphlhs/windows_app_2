@@ -87,4 +87,6 @@ class Picview extends StatelessWidget {
   }
 
   void _follow() {}
+
+  void _unfollow() {}
 }

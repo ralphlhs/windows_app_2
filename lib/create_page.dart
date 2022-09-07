@@ -58,72 +58,189 @@ class _CreatePageState extends State<CreatePage> {
 
   _buildAppbar() {
     return AppBar(
-      title: const Text("새 게시물", textAlign: TextAlign.center,),
+      title: const Text(
+        "새 게시물",
+        textAlign: TextAlign.center,
+      ),
       actions: [
-        IconButton(onPressed: () {
-          // uploadToFirebase;
+        TextButton(
+          onPressed: () {
+            // uploadToFirebase;
 
-          final firebaseStorageRef = FirebaseStorage.instance
-              .ref()
-              .child('post')
-              .child('${DateTime
-              .now()
-              .millisecondsSinceEpoch}.jpg');
+            final firebaseStorageRef = FirebaseStorage.instance
+                .ref()
+                .child('post')
+                .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
 
-          final task = firebaseStorageRef.putFile(
-              _image!, SettableMetadata(contentType: 'image/jpg'));
+            final task = firebaseStorageRef.putFile(
+                _image!, SettableMetadata(contentType: 'image/jpg'));
 
-          task.then((value) {
-            var downloadUrl = value.ref.getDownloadURL();
+            task.then((value) {
+              var downloadUrl = value.ref.getDownloadURL();
 
-            downloadUrl.then((uri) {
-              var doc = FirebaseFirestore.instance.collection('post').doc();
-              doc.set({
-                'id': doc.id,
-                'photoUrl': uri.toString(),
-                'contents': _textfield.text,
-                'email': widget.user!.email,
-                'displayName': widget.user!.displayName,
-                'userPhotoUrl': widget.user!.photoURL
-              }).then((onValue) {
-                Navigator.pop(context);
+              downloadUrl.then((uri) {
+                var doc = FirebaseFirestore.instance.collection('post').doc();
+                doc.set({
+                  'id': doc.id,
+                  'photoUrl': uri.toString(),
+                  'contents': _textfield.text,
+                  'email': widget.user!.email,
+                  'displayName': widget.user!.displayName,
+                  'userPhotoUrl': widget.user!.photoURL
+                }).then((onValue) {
+                  Navigator.pop(context);
+                });
               });
             });
-          });
-
-
-        }, icon: const Icon(Icons.send)),
+          },
+          child: const Text(
+            '공유하기',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold ),
+          ),
+        )
       ],
     );
   }
 
-  _buildBody() {
+  Widget _buildBody() {
     return SingleChildScrollView(
       child: Column(
-        children: [
-          _image == null ? const Text("No Image") : Image.file(_image!),
+        children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              controller: _textfield,
-              // onSubmitted: sendMsg,  //키보드로 엔터 클릭 시 호출
-              // onChanged: checkText,  //text 가 입력될 때 마다 호출
-              decoration: const InputDecoration(
-                // labelText: '텍스트 입력',
-                hintText: '텍스트를 입력해주세요',
-                border: OutlineInputBorder(), //외곽선
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: <Widget>[
+                _buildImage(),
+                const SizedBox(
+                  width: 8.0,
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _textfield,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      labelText: '문구 입력...',
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          const Divider(),
+          const ListTile(
+            leading: Text('사람 태그하기'),
+          ),
+          const Divider(),
+          const ListTile(
+            leading: Text('위치 추가하기'),
+          ),
+          const Divider(),
+          _buildLocation(),
+          const ListTile(
+            leading: Text('위치 추가하기'),
+          ),
+          ListTile(
+            leading: Text('Facebook'),
+            trailing: Switch(
+              value: false,
+              onChanged: (bool value) {},
+            ),
+          ),
+          ListTile(
+            leading: Text('Twitter'),
+            trailing: Switch(
+              value: false,
+              onChanged: (bool value) {},
+            ),
+          ),
+          ListTile(
+            leading: Text('Tumblr'),
+            trailing: Switch(
+              value: false,
+              onChanged: (bool value) {},
+            ),
+          ),
+          Divider(),
+          ListTile(
+            leading: Text(
+              '고급 설정',
+              style: TextStyle(
+                fontSize: 12.0,
+                color: Colors.grey[800],
               ),
-              onTap: (){
-                setState(() {
-                  _text = _textfield.text;
-                });
-              },
             ),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildImage() {
+    return _image == null
+        ? const Text('No Image')
+        : Image.file(
+            _image!,
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+          );
+  }
+
+  Widget _buildLocation() {
+    final locationItems = [
+      '꿈두레 도서관',
+      '경기도 오산',
+      '오산세교',
+      '동탄2신도시',
+      '동탄',
+      '검색',
+    ];
+    return SizedBox(
+      height: 34.0,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: locationItems.map((location) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Chip(
+              label: Text(
+                location,
+                style: TextStyle(fontSize: 12.0),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  // _buildBody() {
+  //   return SingleChildScrollView(
+  //     child: Column(
+  //       children: [
+  //         _image == null ? const Text("No Image") : Image.file(_image!),
+  //         Padding(
+  //           padding: const EdgeInsets.all(10.0),
+  //           child: TextField(
+  //             controller: _textfield,
+  //             // onSubmitted: sendMsg,  //키보드로 엔터 클릭 시 호출
+  //             // onChanged: checkText,  //text 가 입력될 때 마다 호출
+  //             decoration: const InputDecoration(
+  //               // labelText: '텍스트 입력',
+  //               hintText: '텍스트를 입력해주세요',
+  //               border: OutlineInputBorder(), //외곽선
+  //             ),
+  //             onTap: (){
+  //               setState(() {
+  //                 _text = _textfield.text;
+  //               });
+  //             },
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildButton() {
     return Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
