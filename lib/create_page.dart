@@ -65,37 +65,39 @@ class _CreatePageState extends State<CreatePage> {
       actions: [
         TextButton(
           onPressed: () {
-            // uploadToFirebase;
+            uploadToFirebase;
 
-            final firebaseStorageRef = FirebaseStorage.instance
-                .ref()
-                .child('post')
-                .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
-
-            final task = firebaseStorageRef.putFile(
-                _image!, SettableMetadata(contentType: 'image/jpg'));
-
-            task.then((value) {
-              var downloadUrl = value.ref.getDownloadURL();
-
-              downloadUrl.then((uri) {
-                var doc = FirebaseFirestore.instance.collection('post').doc();
-                doc.set({
-                  'id': doc.id,
-                  'photoUrl': uri.toString(),
-                  'contents': _textfield.text,
-                  'email': widget.user!.email,
-                  'displayName': widget.user!.displayName,
-                  'userPhotoUrl': widget.user!.photoURL
-                }).then((onValue) {
-                  Navigator.pop(context);
-                });
-              });
-            });
+            // final firebaseStorageRef = FirebaseStorage.instance
+            //     .ref()
+            //     .child('post')
+            //     .child('${DateTime
+            //     .now()
+            //     .millisecondsSinceEpoch}.jpg');
+            //
+            // final task = firebaseStorageRef.putFile(
+            //     _image!, SettableMetadata(contentType: 'image/jpg'));
+            //
+            // task.then((value) {
+            //   var downloadUrl = value.ref.getDownloadURL();
+            //
+            //   downloadUrl.then((uri) {
+            //     var doc = FirebaseFirestore.instance.collection('post').doc();
+            //     doc.set({
+            //       'id': doc.id,
+            //       'photoUrl': uri.toString(),
+            //       'contents': _textfield.text,
+            //       'email': widget.user!.email,
+            //       'displayName': widget.user!.displayName,
+            //       'userPhotoUrl': widget.user!.photoURL
+            //     }).then((onValue) {
+            //       Navigator.pop(context);
+            //     });
+            //   });
+            // });
           },
           child: const Text(
             '공유하기',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold ),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         )
       ],
@@ -179,11 +181,11 @@ class _CreatePageState extends State<CreatePage> {
     return _image == null
         ? const Text('No Image')
         : Image.file(
-            _image!,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          );
+      _image!,
+      width: 50,
+      height: 50,
+      fit: BoxFit.cover,
+    );
   }
 
   Widget _buildLocation() {
@@ -269,38 +271,43 @@ class _CreatePageState extends State<CreatePage> {
     final firebaseStorageRef = FirebaseStorage.instance
         .ref()
         .child('post')
-        .child('${DateTime.now().microsecondsSinceEpoch}.jpg');
+        .child('${DateTime
+        .now()
+        .microsecondsSinceEpoch}.png');
 
     final task = await firebaseStorageRef.putFile(
-        _image!, SettableMetadata(contentType: 'image/jpg'));
+        _image!, SettableMetadata(contentType: 'image/png'));
 
-    final uri = await task.ref.getDownloadURL();
+    final downloadUrl = task.ref.getDownloadURL();
 
-    final doc = FirebaseFirestore.instance.collection('post').doc();
-
-    await doc.set({
-      'id': doc.id,
-      'photoUrl': uri.toString(),
-      'contents': _textfield.text,
-      'email': widget.user!.email,
-      'displayName': widget.user!.displayName,
-      'userPhotoUrl': widget.user!.photoURL
+    downloadUrl.then((uri) {
+      var doc = FirebaseFirestore.instance.collection('post').doc();
+      doc.set({
+        'id': doc.id,
+        'photoUrl': uri.toString(),
+        'contents': _textfield.text,
+        'email': widget.user!.email,
+        'displayName': widget.user!.displayName,
+        'userPhotoUrl': widget.user!.photoURL
+      }).then((onValue) {
+        // 완료 후 앞 화면으로 이동
+        Navigator.pop(context);
+      });
     });
-
-    // 완료 후 앞 화면으로 이동
-    Navigator.pop(context);
   }
-}
 
 //=====================================================
 // Future<void> _uploadPost(BuildContext context) async {
-//   final firebaseStorageRef = FirebaseStorage.instance
+//   //스토리지에 업로드할 파일 경로
+//     final firebaseStorageRef = FirebaseStorage.instance
 //       .ref()
 //       .child('post')
 //       .child('${DateTime.now().millisecondsSinceEpoch}.png');
-//
-//   final task = await firebaseStorageRef.putFile(
-//       _image, SettableMetadata(contentType: 'image/png'));
+// //파일업로드
+//   final task = firebaseStorageRef.putFile(
+//       _image!, SettableMetadata(contentType: 'image/png'));
+// //완료까지 기다림
+//   final storageTaskSnapshot = await task.onComplete;
 //
 //   final uri = await task.ref.getDownloadURL();
 //
@@ -308,10 +315,10 @@ class _CreatePageState extends State<CreatePage> {
 //   await doc.set({
 //     'id': doc.id,
 //     'photoUrl': uri.toString(),
-//     'contents': textEditingController.text,
-//     'email': widget.user.email,
-//     'displayName': widget.user.displayName,
-//     'userPhotoUrl': widget.user.photoURL
+//     'contents': _textfield.text,
+//     'email': widget.user!.email,
+//     'displayName': widget.user!.displayName,
+//     'userPhotoUrl': widget.user!.photoURL
 //   });
 //
 //   // 완료 후 앞 화면으로 이동
