@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 class Picview extends StatelessWidget {
   final User? user;
-  final DocumentSnapshot? snapshot;
+  final DocumentSnapshot? docu;
 
-  Picview({Key? key, required this.user, required this.snapshot})
+  const Picview({Key? key, required this.user, required this.docu})
       : super(key: key);
 
   @override
@@ -24,7 +24,7 @@ class Picview extends StatelessWidget {
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundImage: NetworkImage(snapshot!['userPhotoUrl']),
+                    backgroundImage: NetworkImage(docu!['userPhotoUrl']),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
@@ -34,25 +34,66 @@ class Picview extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             Text(
-                              snapshot!['email'],
+                              docu!['email'],
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
                               width: 8,
                             ),
-                            GestureDetector(
-                              onTap: _follow,
-                              child: const Text(
-                                "팔로우",
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
+                            StreamBuilder<DocumentSnapshot>(
+                                stream: _followingStream(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const CircularProgressIndicator();
+                                  }
+                                  final data = snapshot.data!.data();
+                                  if (data == null ||
+                                      (data as Map<String, dynamic>)[
+                                              docu!['email']] ==
+                                          null ||
+                                      data[docu!['email']] == false) {
+                                    return GestureDetector(
+                                      onTap: _follow,
+                                      child: Row(
+                                        children: <Widget>[
+                                          SizedBox(
+                                              height: 18,
+                                              width: 18,
+                                              child: Image.asset(
+                                                  'images/bad_icon.png')),
+                                          const Text(
+                                            " 팔로우",
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  return GestureDetector(
+                                    onTap: _unfollow,
+                                    child: Row(
+                                      children: <Widget>[
+                                        SizedBox(
+                                            height: 18,
+                                            width: 18,
+                                            child: Image.asset(
+                                                'images/good_icon.png')),
+                                        const Text(
+                                          " 언팔로우",
+                                          style: TextStyle(
+                                              color: Colors.blue,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
                           ],
                         ),
-                        Text(snapshot!['displayName']),
+                        Text(docu!['displayName']),
                       ],
                     ),
                   )
@@ -60,15 +101,17 @@ class Picview extends StatelessWidget {
               ),
             ),
             Hero(
-              tag: snapshot!['photoUrl'],
+              tag: docu!.id,
               child: Image.network(
-                snapshot!['photoUrl'],
+                docu!['photoUrl'],
                 fit: BoxFit.cover,
+                width: double.infinity,
               ),
             ),
-            Center(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Text(
-                snapshot!['contents'],
+                docu!['contents'],
                 style: const TextStyle(fontSize: 15),
               ),
             ),
@@ -76,17 +119,38 @@ class Picview extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.transparent,
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        child: Image.network(
-            'https://www.freeiconspng.com/uploads/blue-back-undo-return-button-png-15.png'),
-      ),
+          backgroundColor: Colors.transparent,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Image.asset('images/blue_button.png')),
     );
   }
 
-  void _follow() {}
+  void _follow() {
+    FirebaseFirestore.instance
+        .collection('following')
+        .doc(user!.email)
+        .set({docu!['email']: true});
+    FirebaseFirestore.instance
+        .collection('follower')
+        .doc(docu!['email'])
+        .set({user!.email!: true});
+  }
 
-  void _unfollow() {}
+  void _unfollow() {
+    FirebaseFirestore.instance.collection('following').doc(user!.email).set({
+      docu!['email']: false,
+    });
+    FirebaseFirestore.instance.collection('follower').doc(docu!['email']).set({
+      user!.email!: false,
+    });
+  }
+
+  Stream<DocumentSnapshot> _followingStream() {
+    return FirebaseFirestore.instance
+        .collection('following')
+        .doc(user!.email)
+        .snapshots();
+  }
 }

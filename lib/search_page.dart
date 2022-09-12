@@ -17,11 +17,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueGrey,
-      appBar: AppBar(
-        title: Text(widget.user!.displayName!,
-            style: const TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-      ),
+      appBar: _buildAppBar() as PreferredSizeWidget?,
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -39,6 +35,14 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  Widget _buildAppBar() {
+   return AppBar(
+      title: Text(widget.user!.displayName!,
+          style: const TextStyle(color: Colors.black)),
+      backgroundColor: Colors.white,
+    );
+  }
+
   Widget _buildBody() {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('post').snapshots(),
@@ -46,7 +50,7 @@ class _SearchPageState extends State<SearchPage> {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          var _items = snapshot.data?.docs ?? [];
+          var _items = snapshot.data!.docs ?? [];
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisSpacing: 5,
@@ -67,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
                         MaterialPageRoute(
                             builder: (context) => Picview(
                                   user: widget.user,
-                                  snapshot: _items[index],
+                                  docu: _items[index],
                                 )),
                       );
                     },

@@ -50,13 +50,13 @@ class _CreatePageState extends State<CreatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppbar(),
+      appBar: _buildAppbar(context) as PreferredSizeWidget?,
       body: _buildBody(),
       floatingActionButton: _buildButton(),
     );
   }
 
-  _buildAppbar() {
+  Widget _buildAppbar(BuildContext context) {
     return AppBar(
       title: const Text(
         "새 게시물",
@@ -65,7 +65,8 @@ class _CreatePageState extends State<CreatePage> {
       actions: [
         TextButton(
           onPressed: () {
-            uploadToFirebase;
+            uploadToFirebase(context);
+            // _uploadPost(context);
 
             // final firebaseStorageRef = FirebaseStorage.instance
             //     .ref()
@@ -181,11 +182,11 @@ class _CreatePageState extends State<CreatePage> {
     return _image == null
         ? const Text('No Image')
         : Image.file(
-      _image!,
-      width: 50,
-      height: 50,
-      fit: BoxFit.cover,
-    );
+            _image!,
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+          );
   }
 
   Widget _buildLocation() {
@@ -207,7 +208,7 @@ class _CreatePageState extends State<CreatePage> {
             child: Chip(
               label: Text(
                 location,
-                style: TextStyle(fontSize: 12.0),
+                style: const TextStyle(fontSize: 12.0),
               ),
             ),
           );
@@ -271,9 +272,7 @@ class _CreatePageState extends State<CreatePage> {
     final firebaseStorageRef = FirebaseStorage.instance
         .ref()
         .child('post')
-        .child('${DateTime
-        .now()
-        .microsecondsSinceEpoch}.png');
+        .child('${DateTime.now().microsecondsSinceEpoch}.png');
 
     final task = await firebaseStorageRef.putFile(
         _image!, SettableMetadata(contentType: 'image/png'));
@@ -297,34 +296,35 @@ class _CreatePageState extends State<CreatePage> {
   }
 
 //=====================================================
-// Future<void> _uploadPost(BuildContext context) async {
-//   //스토리지에 업로드할 파일 경로
-//     final firebaseStorageRef = FirebaseStorage.instance
-//       .ref()
-//       .child('post')
-//       .child('${DateTime.now().millisecondsSinceEpoch}.png');
-// //파일업로드
-//   final task = firebaseStorageRef.putFile(
-//       _image!, SettableMetadata(contentType: 'image/png'));
-// //완료까지 기다림
-//   final storageTaskSnapshot = await task.onComplete;
-//
-//   final uri = await task.ref.getDownloadURL();
-//
-//   final doc = FirebaseFirestore.instance.collection('post').doc();
-//   await doc.set({
-//     'id': doc.id,
-//     'photoUrl': uri.toString(),
-//     'contents': _textfield.text,
-//     'email': widget.user!.email,
-//     'displayName': widget.user!.displayName,
-//     'userPhotoUrl': widget.user!.photoURL
-//   });
-//
-//   // 완료 후 앞 화면으로 이동
-//   Navigator.pop(context);
-// }
+  Future<void> _uploadPost(BuildContext context) async {
+    //스토리지에 업로드할 파일 경로
+    final firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child('post')
+        .child('${DateTime.now().millisecondsSinceEpoch}.png');
+//파일업로드
+    final task = await firebaseStorageRef.putFile(
+        _image!, SettableMetadata(contentType: 'image/png'));
+//완료까지 기다림
+//     final storageTaskSnapshot = await task.onComplete;
+//업로드 완료 후  url
+    final downloadUrl = await task.ref.getDownloadURL();
+//문서작성
+    final doc = FirebaseFirestore.instance.collection('post');
+    await doc.add({
+      'id': doc.id,
+      'photoUrl': downloadUrl.toString(),
+      'contents': _textfield.text,
+      'email': widget.user!.email,
+      'displayName': widget.user!.displayName,
+      'userPhotoUrl': widget.user!.photoURL
+    });
+
+    // 완료 후 앞 화면으로 이동
+    Navigator.pop(context);
+  }
 //
 // Widget _buildBody() {
 //   return _image == null ? Text('No Image') : Image.file(_image);
 // }
+}
