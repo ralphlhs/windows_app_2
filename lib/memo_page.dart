@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -28,16 +29,22 @@ class _MemoPageState extends State<MemoPage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.user!.displayName!)),
       body: _buildBody(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _addText();
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
   Widget _buildBody() {
-    return StreamBuilder(
-        stream: collectionReference.doc().snapshots(),
+    return StreamBuilder<QuerySnapshot>(
+        stream: collectionReference.snapshots(),
         builder: (context, AsyncSnapshot snapshot) {
-// final DocumentSnapshot docu = snapshot.data;
+          var docu = snapshot.data?.docs ?? [];
           return ListView.builder(
-            itemCount: 10,
+            itemCount: docu.length,
             itemBuilder: (context, index) {
               return SizedBox(
                 height: 100,
@@ -45,7 +52,7 @@ class _MemoPageState extends State<MemoPage> {
                 child: Card(
                   margin: const EdgeInsets.all(7),
                   shape: RoundedRectangleBorder(
-//모서리를 둥글게 하기 위해 사용
+                    //모서리를 둥글게 하기 위해 사용
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   elevation: 8.0,
@@ -55,8 +62,8 @@ class _MemoPageState extends State<MemoPage> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Content Number1 ${index}'),
-                          Text('Content Number2 ${index}'),
+                          Text(docu[index]['name']),
+                          Text(docu[index]['amount']),
                         ],
                       ),
                       const SizedBox(
@@ -64,7 +71,7 @@ class _MemoPageState extends State<MemoPage> {
                       ),
                       IconButton(
                         onPressed: () {
-                          _addText();
+                          _amendText();
                         },
                         icon: const Icon(Icons.add),
                         color: Colors.teal,
@@ -99,7 +106,7 @@ class _MemoPageState extends State<MemoPage> {
         context: context,
         builder: (BuildContext context) {
           return Container(
-            height: 250,
+            height: 320,
             color: Colors.transparent,
             child: Container(
               decoration: const BoxDecoration(
@@ -112,23 +119,39 @@ class _MemoPageState extends State<MemoPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const Text(
+                      "입력할 메모를 작성하세요.",
+                      style: TextStyle(fontSize: 18.0),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: TextField(
                         controller: text01,
                         decoration: const InputDecoration(
-                          labelText: 'Input',
+                          labelText: '글 내용',
                         ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: TextField(
+                        keyboardType: TextInputType.number,
                         controller: text02,
                         decoration: const InputDecoration(
-                          labelText: 'Input',
+                          labelText: '액수',
                         ),
                       ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        collectionReference.doc().set({
+                          'id': widget.user!.email,
+                          'name': text01.text,
+                          'amount': text02.text,
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: const Text('올리기'),
                     ),
                   ],
                 ),
@@ -137,6 +160,8 @@ class _MemoPageState extends State<MemoPage> {
           );
         });
   }
+
+  void _amendText() {}
 
   void _deleteText() {}
 }
