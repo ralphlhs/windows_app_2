@@ -312,7 +312,7 @@ class _CreatePageState extends State<CreatePage> {
 //문서작성
     final doc = FirebaseFirestore.instance.collection('post');
     await doc.add({
-      'id': doc.id,
+      'id': "doc.id",
       'photoUrl': downloadUrl.toString(),
       'contents': _textfield.text,
       'email': widget.user!.email,
