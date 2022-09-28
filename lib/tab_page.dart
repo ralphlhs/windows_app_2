@@ -23,8 +23,8 @@ class _TabPageState extends State<TabPage> {
     _pages = [
       HomePage(user: widget.user),
       SearchPage(user: widget.user),
-      AccountPage(user: widget.user),
       MemoPage(user: widget.user),
+      AccountPage(user: widget.user),
     ];
   }
 
@@ -40,8 +40,8 @@ class _TabPageState extends State<TabPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.business), label: 'KakaoT'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'School'),
           BottomNavigationBarItem(icon: Icon(Icons.airport_shuttle), label: 'Memo'),
+          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'School'),
         ],
         currentIndex: _selectedIndex,
         onTap: (int index) {

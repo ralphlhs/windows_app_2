@@ -143,27 +143,27 @@ class _CreatePageState extends State<CreatePage> {
             leading: Text('위치 추가하기'),
           ),
           ListTile(
-            leading: Text('Facebook'),
+            leading: const Text('Facebook'),
             trailing: Switch(
               value: false,
               onChanged: (bool value) {},
             ),
           ),
           ListTile(
-            leading: Text('Twitter'),
+            leading: const Text('Twitter'),
             trailing: Switch(
               value: false,
               onChanged: (bool value) {},
             ),
           ),
           ListTile(
-            leading: Text('Tumblr'),
+            leading: const Text('Tumblr'),
             trailing: Switch(
               value: false,
               onChanged: (bool value) {},
             ),
           ),
-          Divider(),
+          const Divider(),
           ListTile(
             leading: Text(
               '고급 설정',
