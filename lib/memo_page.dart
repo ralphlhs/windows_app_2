@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class MemoPage extends StatefulWidget {
   const MemoPage({Key? key, required this.user}) : super(key: key);
@@ -19,17 +20,21 @@ class _MemoPageState extends State<MemoPage> {
 
   //data 얻는 방법 1.
   void adfa() async {
-      DocumentReference documentReference = collectionReference.doc('BhHOZL2cKON5RNyyib4R');
-      DocumentSnapshot documentSnapshot = await documentReference.get();
-      print(documentSnapshot.data());
-      print('이 머저리');
+    DocumentReference documentReference =
+        collectionReference.doc('BhHOZL2cKON5RNyyib4R');
+    DocumentSnapshot documentSnapshot = await documentReference.get();
+    print(documentSnapshot.data());
+    print('이 머저리');
   }
 
   //data 얻는 방법 2.
   void abcd() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('memo').get();
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('memo').get();
     List<QueryDocumentSnapshot> list = querySnapshot.docs;
-    list.forEach((element) {print(element.data());});
+    list.forEach((element) {
+      print(element.data());
+    });
   }
 
   @override
@@ -58,7 +63,7 @@ class _MemoPageState extends State<MemoPage> {
     return StreamBuilder<QuerySnapshot>(
         stream: collectionReference.snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          List <QueryDocumentSnapshot> docu = snapshot.data?.docs?? [];
+          List<QueryDocumentSnapshot> docu = snapshot.data?.docs ?? [];
           return ListView.builder(
             itemCount: docu.length,
             itemBuilder: (context, index) {
@@ -78,8 +83,12 @@ class _MemoPageState extends State<MemoPage> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(docu[index]['name']),
-                          Text(docu[index]['amount']),
+                          Text(docu[index]['name'] == ''
+                              ? '이름을 쓰시오'
+                              : docu[index]['name']),
+                          Text(docu[index]['amount'] == ''
+                              ? '-숫자를 쓰시오-'
+                              : '${docu[index]['amount']}'),
                         ],
                       ),
                       const SizedBox(
@@ -113,26 +122,23 @@ class _MemoPageState extends State<MemoPage> {
         });
   }
 
-  void _addText() {
+  Future<void> _addText() async {
     // final documentReference = collectionReference.doc().set({'data': 'adfads'});
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
+        isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
         context: context,
         builder: (BuildContext context) {
-          return Container(
-            height: 320,
-            color: Colors.transparent,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-              ),
-              child: Center(
-                child: Column(
+          return SizedBox(
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: 20,
+                  left: 20,
+                  right: 20,
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
@@ -164,7 +170,7 @@ class _MemoPageState extends State<MemoPage> {
                         collectionReference.doc().set({
                           'id': widget.user!.email,
                           'name': text01.text,
-                          'amount': text02.text,
+                          'amount': int.parse(text02.text.trim()),
                         });
                         Navigator.pop(context);
                       },
@@ -173,13 +179,13 @@ class _MemoPageState extends State<MemoPage> {
                   ],
                 ),
               ),
-            ),
+
           );
         });
   }
 
-  void _amendText(snapshot) {
-    showModalBottomSheet<void>(
+  Future<void> _amendText(snapshot) async {
+    await showModalBottomSheet<void>(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
@@ -211,6 +217,12 @@ class _MemoPageState extends State<MemoPage> {
                           helperText: snapshot['name'],
                           hintText: snapshot['name'],
                         ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(
+                              RegExp(r'(idiot|donkey|fool)',
+                                  caseSensitive: false),
+                              replacementString: '***')
+                        ],
                       ),
                     ),
                     Padding(
@@ -219,8 +231,9 @@ class _MemoPageState extends State<MemoPage> {
                         keyboardType: TextInputType.number,
                         controller: text02,
                         decoration: InputDecoration(
-                          labelText: snapshot['amount'],
-                        ),
+                            labelText: snapshot['amount'],
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50))),
                       ),
                     ),
                     ElevatedButton(
@@ -242,9 +255,9 @@ class _MemoPageState extends State<MemoPage> {
         });
   }
 
-  void _deleteText(snapshot) {
+  Future<void> _deleteText(snapshot) async {
     // final documentReference = collectionReference.doc().set({'data': 'adfads'});
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
