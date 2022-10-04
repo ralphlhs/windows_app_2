@@ -38,10 +38,10 @@ class _TabPageState extends State<TabPage> {
         unselectedFontSize: 11.0,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.business), label: 'KakaoT'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.airport_shuttle), label: 'Memo'),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'School'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'SEARCH'),
+          BottomNavigationBarItem(icon: Icon(Icons.mail), label: 'MEMO'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_box), label: 'ACCOUNT'),
         ],
         currentIndex: _selectedIndex,
         onTap: (int index) {

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class MemoPage extends StatefulWidget {
   const MemoPage({Key? key, required this.user}) : super(key: key);
@@ -59,6 +60,8 @@ class _MemoPageState extends State<MemoPage> {
     );
   }
 
+  var f = NumberFormat.currency(locale: "ko_KR", symbol: "￦");
+
   Widget _buildBody() {
     return StreamBuilder<QuerySnapshot>(
         stream: collectionReference.snapshots(),
@@ -88,7 +91,7 @@ class _MemoPageState extends State<MemoPage> {
                               : docu[index]['name']),
                           Text(docu[index]['amount'] == ''
                               ? '-숫자를 쓰시오-'
-                              : '${docu[index]['amount']}'),
+                              : f.format(docu[index]['amount'])),
                         ],
                       ),
                       const SizedBox(
@@ -124,7 +127,7 @@ class _MemoPageState extends State<MemoPage> {
 
   Future<void> _addText() async {
     // final documentReference = collectionReference.doc().set({'data': 'adfads'});
-    await showModalBottomSheet<void>(
+    await showModalBottomSheet(
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -139,116 +142,145 @@ class _MemoPageState extends State<MemoPage> {
                   right: 20,
                   bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "입력할 메모를 작성하세요",
-                      style: TextStyle(fontSize: 18.0),
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    "입력할 메모를 작성하세요",
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: text01,
+                      decoration: InputDecoration(
+                        labelText: '글 내용',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50))
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.deny(
+                            RegExp(
+                                r'(idiot|donkey|fool|바보|병신|등신|보지|자지|씹질|fuck|씨팔|씨발|)',
+                                caseSensitive: false),
+                            replacementString: '***')
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: TextField(
-                        controller: text01,
-                        decoration: const InputDecoration(
-                          labelText: '글 내용',
-                        ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp('[0-9]'))
+                      ],
+                      keyboardType: TextInputType.number,
+                      controller: text02,
+                      decoration: InputDecoration(
+                        labelText: '액수',
+                          border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50))
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        controller: text02,
-                        decoration: const InputDecoration(
-                          labelText: '액수',
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        //또는 collectionReference.add({})
-                        collectionReference.doc().set({
-                          'id': widget.user!.email,
-                          'name': text01.text,
-                          'amount': int.parse(text02.text.trim()),
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: const Text('올리기'),
-                    ),
-                  ],
-                ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      //또는 collectionReference.add({})
+                      collectionReference.doc().set({
+                        'id': widget.user!.email,
+                        'name': text01.text,
+                        'amount': int.parse(text02.text.trim()),
+                      });
+                      text01.text = '';
+                      text02.text = '';
+                      Navigator.pop(context);
+                    },
+                    child: const Text('올리기'),
+                  ),
+                ],
               ),
-
+            ),
           );
         });
   }
 
   Future<void> _amendText(snapshot) async {
-    await showModalBottomSheet<void>(
+    text01.text = snapshot['name'];
+    text02.text = '${snapshot['amount']}';
+
+    await showModalBottomSheet(
+        isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
         context: context,
         builder: (BuildContext context) {
-          return Container(
-            height: 320,
-            color: Colors.transparent,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-              ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "메모의 내용을 수정하세요",
-                      style: TextStyle(fontSize: 18.0),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
-                      child: TextField(
-                        controller: text01,
-                        decoration: InputDecoration(
-                          helperText: snapshot['name'],
-                          hintText: snapshot['name'],
-                        ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.deny(
-                              RegExp(r'(idiot|donkey|fool)',
-                                  caseSensitive: false),
-                              replacementString: '***')
-                        ],
+          return SizedBox(
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: 20,
+                  left: 20,
+                  right: 20,
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    "메모의 내용을 수정하세요",
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                    child: TextField(
+                      controller: text01,
+                      decoration: InputDecoration(
+                        labelText: snapshot['name'],
+                        // helperText: snapshot['name'],
+                        hintText: snapshot['name'],
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50))
                       ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.deny(
+                            RegExp(
+                                r'(idiot|donkey|fool|바보|병신|등신|보지|자지|씹질|fuck|씨팔|씨발|)',
+                                caseSensitive: false),
+                            replacementString: '***')
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        controller: text02,
-                        decoration: InputDecoration(
-                            labelText: snapshot['amount'],
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50))),
-                      ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: text02,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp('[0-9]'))
+                      ],
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          labelText: f.format(snapshot['amount']),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50))),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        collectionReference.doc(snapshot.id).update({
-                          'id': widget.user!.email,
-                          'name': text01.text,
-                          'amount': text02.text,
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: const Text('수정하기'),
-                    ),
-                  ],
-                ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final String name = text01.text;
+                      final int amount = int.parse(text02.text.trim());
+                      await collectionReference.doc(snapshot.id).update({
+                        'id': widget.user!.email,
+                        'name': name,
+                        'amount': amount,
+                        // 'name': text01.text,
+                        // 'amount': int.parse(text02.text.trim()),
+                      });
+                      text01.text = '';
+                      text02.text = '';
+                      Navigator.pop(context);
+                    },
+                    child: const Text('수정하기'),
+                  ),
+                ],
               ),
             ),
           );
@@ -290,7 +322,7 @@ class _MemoPageState extends State<MemoPage> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
                       child: Text(
-                        snapshot['amount'],
+                        f.format(snapshot['amount']),
                       ),
                     ),
                     ElevatedButton(

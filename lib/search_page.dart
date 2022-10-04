@@ -16,7 +16,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey,
+      backgroundColor: Colors.black45,
       appBar: _buildAppBar() as PreferredSizeWidget?,
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
@@ -75,11 +75,9 @@ class _SearchPageState extends State<SearchPage> {
                                 )),
                       );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      child: Image.network(_items[index]['photoUrl'],
+                    child:  Image.network(_items[index]['photoUrl'],
                           fit: BoxFit.cover),
-                    ),
+
                   ),
                 ),
               );

@@ -44,6 +44,7 @@ dependencies:
   firebase_storage: ^10.3.4
   cloud_firestore: ^3.4.3
   google_fonts: ^3.0.1
+  intl: ^0.17.0
 
 
 dev_dependencies:
@@ -73,6 +74,7 @@ flutter:
      - images/bad_icon.png
      - images/good_icon.png
      - images/blue_button.png
+     - images/trash.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
