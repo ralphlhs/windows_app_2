@@ -25,7 +25,6 @@ class _MemoPageState extends State<MemoPage> {
         collectionReference.doc('BhHOZL2cKON5RNyyib4R');
     DocumentSnapshot documentSnapshot = await documentReference.get();
     print(documentSnapshot.data());
-    print('이 머저리');
   }
 
   //data 얻는 방법 2.

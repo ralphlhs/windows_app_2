@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:windows_app_2/pic_view_detail.dart';
 
 class Picview extends StatelessWidget {
   final User? user;
@@ -28,8 +29,19 @@ class Picview extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(docu!['userPhotoUrl']),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PicViewDetail(
+                              docu: docu,
+                            )),
+                      );
+                    },
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(docu!['userPhotoUrl']),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
